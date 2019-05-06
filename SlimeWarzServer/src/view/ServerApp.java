@@ -1,6 +1,6 @@
 package view;
 
-import model.Helper;
+import viewModel.Helper;
 import model.Observer;
 import model.SlimeServer;
 

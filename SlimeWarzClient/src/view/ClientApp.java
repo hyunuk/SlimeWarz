@@ -1,7 +1,9 @@
 package view;
 
-import model.ConnectionManager;
-import model.Helper;
+import viewModel.ConnectionManager;
+import viewModel.GameManager;
+import viewModel.Helper;
+import model.Observer;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -9,7 +11,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.io.IOException;
 
-public class ClientApp extends JFrame {
+public class ClientApp extends JFrame implements Observer {
 	private static final int LINE_COUNT = 7;
 	private final Dimension CLIENT_FRAME_DIM = new Dimension(760, 760);
 	private final Rectangle CLIENT_FRAME_RECT = new Rectangle(CLIENT_FRAME_DIM);
@@ -18,9 +20,12 @@ public class ClientApp extends JFrame {
 	private JTextArea clientLog;
 	private JTextField ipTextField, portTextField, nameField;
 	private ConnectionManager connectionManager;
+	private GameManager gameManager;
 
 	public ClientApp() {
 		connectionManager = new ConnectionManager();
+		connectionManager.addObserver(this);
+		gameManager = new GameManager();
 	}
 
 	private void loadGUI() {
@@ -52,18 +57,7 @@ public class ClientApp extends JFrame {
 		return returnPanel;
 	}
 
-	private void readyGame() {
-		if (connectionManager.getClientSocket() != null) {
-			gameStartBtn.setText("Waiting..");
-			gameStartBtn.setEnabled(false);
-			printLog("Ready for the game. Waiting another player.");
-			cancelBtn.setVisible(true);
-		} else {
-			printLog("You are not connected yet.");
-		}
-	}
-
-	private void createClientSocketFunc() {
+	private void createSocketBtnEvent() {
 		final String FOUND_SERVER = "Found server, connected.";
 		final String ALREADY_CONNECTED = "You are already connected.";
 
@@ -72,6 +66,7 @@ public class ClientApp extends JFrame {
 		try {
 			if (connectionManager.getClientSocket() == null) {
 				connectionManager.setThreads(hostname, port);
+				connectionManager.startThreads();
 				printLog(FOUND_SERVER);
 				nameField.setEditable(false);
 			} else {
@@ -82,14 +77,27 @@ public class ClientApp extends JFrame {
 		}
 	}
 
+	private void readyBtnEvent() {
+		if (connectionManager.getClientSocket() != null) {
+			gameStartBtn.setText("Waiting..");
+			gameStartBtn.setEnabled(false);
+			printLog("Ready for the game. Waiting another player.");
+			cancelBtn.setVisible(true);
+		} else {
+			printLog("You are not connected yet.");
+		}
+	}
+
 	private void gameStart() {
 		getContentPane().removeAll();
 		getContentPane().add(gamePanel());
 		revalidate();
 		repaint();
+
+		gameManager.startProcedure();
 	}
 
-	private void cancelFunc() {
+	private void cancelBtnEvent() {
 		gameStartBtn.setText("Game Start");
 		gameStartBtn.setEnabled(true);
 		cancelBtn.setVisible(false);
@@ -131,7 +139,7 @@ public class ClientApp extends JFrame {
 		clientLog.setEditable(false);
 		helper.attach(returnPanel, sp, 30, 180, 500, 100);
 		helper.attach(returnPanel, createClientSocketBtn, 30, 130, 150, 40);
-		createClientSocketBtn.addActionListener(e -> createClientSocketFunc());
+		createClientSocketBtn.addActionListener(e -> createSocketBtnEvent());
 
 		return returnPanel;
 	}
@@ -150,8 +158,8 @@ public class ClientApp extends JFrame {
 		helper.attach(returnPanel, nameField, 300, 30, 200, 25);
 		cancelBtn.setVisible(false);
 
-		gameStartBtn.addActionListener(e -> readyGame());
-		cancelBtn.addActionListener(e -> cancelFunc());
+		gameStartBtn.addActionListener(e -> readyBtnEvent());
+		cancelBtn.addActionListener(e -> cancelBtnEvent());
 		return returnPanel;
 	}
 
@@ -207,5 +215,12 @@ public class ClientApp extends JFrame {
 	public static void main(String[] args) {
 		ClientApp clientApp = new ClientApp();
 		clientApp.loadGUI();
+	}
+
+	@Override
+	public void update(String message) {
+		if (message.startsWith("[START]")) {
+			gameStart();
+		}
 	}
 }

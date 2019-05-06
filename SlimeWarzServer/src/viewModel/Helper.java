@@ -1,4 +1,4 @@
-package model;
+package viewModel;
 
 import javax.swing.*;
 import java.awt.*;
