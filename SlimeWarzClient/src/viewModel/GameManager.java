@@ -5,7 +5,7 @@ public class GameManager {
 
 	}
 
-	public void startProcedure() {
 
+	public void startProcedure() {
 	}
 }
