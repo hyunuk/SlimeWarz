@@ -1,14 +1,14 @@
 package view;
 
-import viewModel.Helper;
 import model.Observer;
-import model.SlimeServer;
+import viewModel.ConnectionManager;
+import viewModel.Helper;
+import viewModel.ServerManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.net.InetAddress;
 
 public class ServerApp extends JFrame implements Observer {
@@ -19,7 +19,9 @@ public class ServerApp extends JFrame implements Observer {
 	private JTextField portText;
 	private JTextArea serverLog;
 	private int portNum;
-	private SlimeServer slimeServer;
+	//private ServerModel serverModel;
+	private ServerManager serverManager;
+	private ConnectionManager connectionManager;
 
 	public static void main(String[] args) {
 		ServerApp serverApp = new ServerApp();
@@ -32,7 +34,6 @@ public class ServerApp extends JFrame implements Observer {
 		final String MSG_PORT_NUMBER = "8888";
 		final String MSG_CREATE_BUTTON = "Create a Socket";
 		final String MSG_SERVER_LOG = "Please let the client player know your IP address and Port number.";
-		final String MSG_CLOSING_SERVER = "Closing Server";
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("SlimeWars server");
@@ -68,14 +69,8 @@ public class ServerApp extends JFrame implements Observer {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				if (slimeServer != null) {
-					try {
-						slimeServer.close();
-						System.out.println(MSG_CLOSING_SERVER);
-					} catch (IOException err) {
-						System.out.println(err.getMessage());
-					}
-				}
+				connectionManager.closeServer();
+
 			}
 		});
 		pack();
@@ -83,15 +78,8 @@ public class ServerApp extends JFrame implements Observer {
 	}
 
 	private void createServerSocket() {
-		try {
-			portNum = Integer.parseInt(portText.getText());
-			slimeServer = new SlimeServer(portNum);
-			slimeServer.start();
-			slimeServer.addObserver(this);
-		} catch (IOException e) {
-			String errorMSG = "PORT #" + portNum + " is already opened.\r\n";
-			printLog(errorMSG);
-		}
+		portNum = Integer.parseInt(portText.getText());
+		connectionManager.createServer(portNum);
 	}
 
 	private void printLog(String str) {

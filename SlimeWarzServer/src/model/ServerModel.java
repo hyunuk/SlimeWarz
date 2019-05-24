@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SlimeServer extends Thread implements CallBack, Observable {
+public class ServerModel extends Thread implements CallBack, Observable {
 	private ServerSocket serverSocket;
 	private PrintWriter out;
 	private ArrayList<PrintWriter> toSend;
 	private List<Observer> observers;
 	private int port;
 
-	public SlimeServer(int port) throws IOException {
+	public ServerModel(int port) throws IOException {
 		this.port = port;
 		serverSocket = new ServerSocket(port);
 		serverSocket.setSoTimeout(10000);
