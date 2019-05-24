@@ -30,6 +30,7 @@ public class ConnectionManager {
 		} catch (IOException e) {
 			String errorMSG = "PORT #" + portNum + " is already opened.\r\n";
 			printLog(errorMSG);
+
 		}
 	}
 
