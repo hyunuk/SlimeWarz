@@ -42,7 +42,6 @@ public class ClientApp extends JFrame {
 					default:
 						squares[y][x].setIcon(null);
 						break;
-						//
 				}
 			}
 		}
