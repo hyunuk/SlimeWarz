@@ -3,31 +3,45 @@ package model;
 import java.util.ArrayList;
 
 public class Player {
-	private ArrayList<Integer> cellIndices;
+	private ArrayList<Pair> cellCoords;
 	private int playerIndex;
 
-	public Player() {
-		this.cellIndices = new ArrayList<>();
-	}
-
-	public ArrayList<Integer> getCellIndices() {
-		return cellIndices;
+	public Player(int playerIndex) {
+		this.cellCoords = new ArrayList<>();
+		this.playerIndex = playerIndex;
 	}
 
 	public void init(int playerIndex) {
 		this.playerIndex = playerIndex;
 	}
 
-	public void add(int cell) {
-		if (this.cellIndices.contains(cell)) {
+	public int getPlayerIndex() {
+		return playerIndex;
+	}
+
+	public ArrayList<Pair> getCellCoords() {
+		return cellCoords;
+	}
+
+	public void add(Pair cell) {
+		if (this.cellCoords.contains(cell)) {
 			System.out.println("Occupied in " + cell);
 			return;
 		}
-		this.cellIndices.add(cell);
+		this.cellCoords.add(cell);
 	}
 
-	private void remove(int cell) {
-		this.cellIndices.remove(cellIndices.indexOf(cell));
+	public void add(int x, int y) {
+		Pair temp = new Pair(x, y);
+		if (this.cellCoords.contains(temp)) {
+			System.out.println("Occupied in " + temp);
+			return;
+		}
+		this.cellCoords.add(temp);
+	}
+
+	public void remove(Pair cell) {
+		this.cellCoords.remove(cellCoords.indexOf(cell));
 	}
 
 

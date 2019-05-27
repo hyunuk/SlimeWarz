@@ -22,16 +22,18 @@ public class ConnectionManager {
 		}
 	}
 
-	public void createServer(int portNum) {
+	public String createServer(int portNum) {
+		String errorMSG = "";
 		try {
 			serverModel = new ServerModel(portNum);
 			serverModel.start();
-			serverModel.addObserver(this);
+			//serverModel.addObserver(this);
 		} catch (IOException e) {
-			String errorMSG = "PORT #" + portNum + " is already opened.\r\n";
-			printLog(errorMSG);
-
+			errorMSG = "PORT #" + portNum + " is already opened.\r\n";
 		}
+
+			//printLog(errorMSG);
+		return errorMSG;
 	}
 
 	public String getIP() {
