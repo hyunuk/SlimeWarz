@@ -1,7 +1,5 @@
 package helper;
 
-import model.Pair;
-
 public class CellHelper {
 	public static int getDistance(Pair from, Pair to) {
 		int xDist = from.getX() - to.getX();

@@ -1,13 +1,14 @@
 package view;
 
-import model.Pair;
+import helper.Observer;
+import helper.Pair;
 import viewModel.GameManager;
 import helper.ComponentAttacher;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class ClientApp extends JFrame {
+public class ClientApp extends JFrame implements Observer {
 	private static final int LINE_COUNT = 7;
 	private final Dimension CLIENT_FRAME_DIM = new Dimension(768, 550);
 	private final Rectangle CLIENT_FRAME_RECT = new Rectangle(CLIENT_FRAME_DIM);
@@ -20,6 +21,7 @@ public class ClientApp extends JFrame {
 
 	private void start() {
 		gameManager = new GameManager(LINE_COUNT);
+		gameManager.addObserver(this);
 		initView();
 		gameManager.startProcedure();
 		drawBoard();
@@ -80,7 +82,6 @@ public class ClientApp extends JFrame {
 				Pair currentCoord = new Pair(x, y);
 				squares[y][x].addActionListener(e -> { // set clickEvent to each of buttons
 					gameManager.clickEvent(currentCoord);
-					drawBoard();
 				});
 			}
 		}
@@ -109,4 +110,8 @@ public class ClientApp extends JFrame {
 		clientApp.start();
 	}
 
+	@Override
+	public void update() {
+		drawBoard();
+	}
 }
