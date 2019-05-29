@@ -1,17 +1,20 @@
 package viewModel;
 
 import helper.CellHelper;
-import model.Pair;
+import helper.Observable;
+import helper.Observer;
+import helper.Pair;
 import model.Player;
 
 import java.util.*;
 
-public class GameManager {
+public class GameManager implements Observable {
 	private final int LINE_COUNT;
 	private List<Player> players;
 	private Map<Pair, Integer> board;
-	private List<Pair> availableAttackCells;
 	private int currentPlayerIndex = 0;
+	private List<Observer> observers;
+
 	private enum Steps {notSelected, clicked, afterClicked}
 	private Steps steps;
 	private Pair selectedCell;
@@ -21,28 +24,31 @@ public class GameManager {
 		this.LINE_COUNT = LINE_COUNT;
 		this.players = new ArrayList<>();
 		this.board = new HashMap<>();
-		this.availableAttackCells = new ArrayList<>();
+		this.observers = new ArrayList<>();
 
 		this.players.add(new Player(0));
 		this.players.add(new Player(1));
 	}
 
 	public void clickEvent(Pair clickedCell) {
-		if (currentPlayerIndex != board.get(clickedCell)) return;
 		Player currPlayer = this.players.get(this.currentPlayerIndex);
 		switch (steps) {
 			case notSelected:
+				if (currentPlayerIndex != board.get(clickedCell)) return;
 				if (isPlayerCell(clickedCell, currPlayer)) {
 					this.selectedCell = clickedCell;
 					this.steps = Steps.clicked;
-					availableAttackCells = refreshCells(selectedCell);
+					updateAvailableCells(selectedCell);
+					notifyObserver();
 				}
 				break;
 
 			case clicked:
 				if (isPlayerCell(clickedCell, currPlayer)) {
 					this.selectedCell = clickedCell;
-					availableAttackCells = refreshCells(selectedCell);
+					updateAvailableCells(selectedCell);
+					clearAvailableCells();
+					notifyObserver();
 					break;
 				}
 
@@ -54,10 +60,12 @@ public class GameManager {
 
 				this.steps = Steps.afterClicked;
 				attack(clickedCell);
+				notifyObserver();
 
 				break;
 			case afterClicked:
 				this.steps = Steps.notSelected;
+				notifyObserver();
 				break;
 		}
 	}
@@ -79,8 +87,8 @@ public class GameManager {
 			gameOver();
 			return;
 		}
-
-		availableAttackCells.clear();
+		clearAvailableCells();
+		notifyObserver();
 		turnCount++;
 	}
 
@@ -102,6 +110,7 @@ public class GameManager {
 	private void consumeCell(Pair clickedCell) {
 		Player currPlayer = players.get(currentPlayerIndex);
 		Player otherPlayer = (currentPlayerIndex == 0) ? players.get(1) : players.get(0);
+		clearAvailableCells();
 
 		List<Pair> neighbors = findNeighborCells(clickedCell, 1);
 		for (Pair pair : neighbors) {
@@ -112,7 +121,7 @@ public class GameManager {
 	}
 
 	private void moveCell(Pair clickedCell) {
-		availableAttackCells.clear();
+		clearAvailableCells();
 		board.put(clickedCell, currentPlayerIndex);
 		players.get(currentPlayerIndex).add(clickedCell.getX(), clickedCell.getY());
 	}
@@ -122,8 +131,17 @@ public class GameManager {
 		players.get(currentPlayerIndex).getCellCoords().remove(selectedCell);
 	}
 
-	private List<Pair> refreshCells(Pair selectedCell) {
-		return findAvailableCells(selectedCell);
+	private void updateAvailableCells(Pair selectedCell) {
+		List<Pair> list = findAvailableCells(selectedCell);
+		for (Pair pair : list) {
+			if (board.containsKey(pair)) board.put(pair, 2);
+		}
+	}
+
+	private void clearAvailableCells() {
+		for (Map.Entry<Pair, Integer> entry : board.entrySet()) {
+			if (entry.getValue() == 2) entry.setValue(Integer.MAX_VALUE);
+		}
 	}
 
 	private List<Pair> findAvailableCells(Pair base) {
@@ -188,5 +206,22 @@ public class GameManager {
 
 	public void startProcedure() {
 		initCells();
+	}
+
+	@Override
+	public void addObserver(Observer o) {
+		if (!observers.contains(o)) observers.add(o);
+	}
+
+	@Override
+	public void removeObserver(Observer o) {
+		observers.remove(o);
+	}
+
+	@Override
+	public void notifyObserver() {
+		for (Observer o : observers) {
+			o.update();
+		}
 	}
 }

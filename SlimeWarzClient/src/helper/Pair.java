@@ -1,4 +1,4 @@
-package model;
+package helper;
 
 import java.util.Objects;
 

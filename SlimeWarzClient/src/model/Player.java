@@ -1,5 +1,7 @@
 package model;
 
+import helper.Pair;
+
 import java.util.ArrayList;
 
 public class Player {
@@ -41,7 +43,7 @@ public class Player {
 	}
 
 	public void remove(Pair cell) {
-		this.cellCoords.remove(cellCoords.indexOf(cell));
+		this.cellCoords.remove(cell);
 	}
 
 
