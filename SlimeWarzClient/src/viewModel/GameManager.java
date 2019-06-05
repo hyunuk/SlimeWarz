@@ -15,8 +15,8 @@ public class GameManager implements Observable {
 	private int currentPlayerIndex = 0;
 	private List<Observer> observers;
 
-	private enum Steps {notSelected, clicked, afterClicked}
-	private Steps steps;
+	private enum Status {notSelected, clicked, afterClicked}
+	private Status status;
 	private Pair selectedCell;
 	private int turnCount;
 
@@ -30,14 +30,18 @@ public class GameManager implements Observable {
 		this.players.add(new Player(1));
 	}
 
+	/**
+	 * When click event happens, check the current status
+	 * @param clickedCell represents currently clicked cell
+	 */
 	public void clickEvent(Pair clickedCell) {
 		Player currPlayer = this.players.get(this.currentPlayerIndex);
-		switch (steps) {
+		switch (status) {
 			case notSelected:
 				if (currentPlayerIndex != board.get(clickedCell)) break;
 				if (isPlayerCell(clickedCell, currPlayer)) {
 					this.selectedCell = clickedCell;
-					this.steps = Steps.clicked;
+					this.status = Status.clicked;
 					updateAvailableCells(selectedCell);
 					notifyObserver();
 				}
@@ -59,13 +63,13 @@ public class GameManager implements Observable {
 					if (players.get(0).getCellCoords().contains(clickedCell)) break;
 				}
 
-				this.steps = Steps.afterClicked;
+				this.status = Status.afterClicked;
 				attack(clickedCell);
 				notifyObserver();
 
 				break;
 			case afterClicked:
-				this.steps = Steps.notSelected;
+				this.status = Status.notSelected;
 				notifyObserver();
 				break;
 		}
@@ -114,11 +118,16 @@ public class GameManager implements Observable {
 		clearAvailableCells();
 
 		List<Pair> neighbors = findNeighborCells(clickedCell, 1);
+
 		for (Pair pair : neighbors) {
-			board.put(pair, currentPlayerIndex);
-			currPlayer.add(pair);
-			otherPlayer.remove(pair);
+			if (board.get(pair).equals(0)) {
+				board.put(pair, currentPlayerIndex);
+				currPlayer.add(pair);
+				otherPlayer.remove(pair);
+			}
+
 		}
+
 	}
 
 	private void moveCell(Pair clickedCell) {
@@ -199,7 +208,7 @@ public class GameManager implements Observable {
 		}
 
 		this.currentPlayerIndex = 0;
-		this.steps = Steps.notSelected;
+		this.status = Status.notSelected;
 		selectedCell = new Pair(Integer.MAX_VALUE, Integer.MAX_VALUE);
 	}
 
