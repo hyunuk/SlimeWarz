@@ -34,7 +34,7 @@ public class GameManager implements Observable {
 		Player currPlayer = this.players.get(this.currentPlayerIndex);
 		switch (steps) {
 			case notSelected:
-				if (currentPlayerIndex != board.get(clickedCell)) return;
+				if (currentPlayerIndex != board.get(clickedCell)) break;
 				if (isPlayerCell(clickedCell, currPlayer)) {
 					this.selectedCell = clickedCell;
 					this.steps = Steps.clicked;
@@ -53,9 +53,10 @@ public class GameManager implements Observable {
 				}
 
 				if (currentPlayerIndex == 0) {
-					if (players.get(1).getCellCoords().contains(clickedCell)) return;
+					if (players.get(1).getCellCoords().contains(clickedCell)) break;
+
 				} else if (currentPlayerIndex == 1) {
-					if (players.get(0).getCellCoords().contains(clickedCell)) return;
+					if (players.get(0).getCellCoords().contains(clickedCell)) break;
 				}
 
 				this.steps = Steps.afterClicked;
@@ -136,6 +137,7 @@ public class GameManager implements Observable {
 		for (Pair pair : list) {
 			if (board.containsKey(pair)) board.put(pair, 2);
 		}
+		System.out.println("update available cells!");
 	}
 
 	private void clearAvailableCells() {
@@ -151,6 +153,7 @@ public class GameManager implements Observable {
 				retList.remove(entry.getKey());
 			}
 		}
+		System.out.println("find available cells");
 		return retList;
 	}
 
