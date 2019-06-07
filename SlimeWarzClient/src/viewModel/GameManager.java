@@ -8,6 +8,8 @@ import model.Player;
 
 import java.util.*;
 
+import static java.lang.Integer.MAX_VALUE;
+
 public class GameManager implements Observable {
 	private final int LINE_COUNT;
 	private List<Player> players;
@@ -102,14 +104,16 @@ public class GameManager implements Observable {
 	}
 
 	private boolean canContinue() {
-		List<Pair> temp;
+		ArrayList<Integer> temp1 = new ArrayList<>();
+
 		for (Map.Entry<Pair, Integer> entry : board.entrySet()) {
-			if (entry.getValue() == 0 || entry.getValue() == 1) {
-				temp = findAvailableCells(entry.getKey());
-				if (temp.size() > 0) return true;
+			if (entry.getValue() == 0 && !temp1.contains(0)) {
+				temp1.add(0);
+			} else if (entry.getValue() == 1 && !temp1.contains(1)) {
+				temp1.add(1);
 			}
 		}
-		return false;
+		return temp1.size() == 2;
 	}
 
 	private void consumeCell(Pair clickedCell) {
@@ -125,9 +129,12 @@ public class GameManager implements Observable {
 				currPlayer.add(pair);
 				otherPlayer.remove(pair);
 			}
-
+			if (board.get(pair).equals(1)) {
+				board.put(pair, currentPlayerIndex);
+				currPlayer.add(pair);
+				otherPlayer.remove(pair);
+			}
 		}
-
 	}
 
 	private void moveCell(Pair clickedCell) {
@@ -137,7 +144,7 @@ public class GameManager implements Observable {
 	}
 
 	private void removeCurrentCell() {
-		board.put(selectedCell, Integer.MAX_VALUE);
+		board.put(selectedCell, MAX_VALUE);
 		players.get(currentPlayerIndex).getCellCoords().remove(selectedCell);
 	}
 
@@ -151,7 +158,7 @@ public class GameManager implements Observable {
 
 	private void clearAvailableCells() {
 		for (Map.Entry<Pair, Integer> entry : board.entrySet()) {
-			if (entry.getValue() == 2) entry.setValue(Integer.MAX_VALUE);
+			if (entry.getValue() == 2) entry.setValue(MAX_VALUE);
 		}
 	}
 
@@ -197,7 +204,7 @@ public class GameManager implements Observable {
 		this.board.clear();
 		for (int y = 0; y < LINE_COUNT; y++) { // Initialize the board with max_int values
 			for (int x = 0; x < LINE_COUNT; x++) {
-				this.board.put(new Pair(x, y), Integer.MAX_VALUE);
+				this.board.put(new Pair(x, y), MAX_VALUE);
 			}
 		}
 
@@ -209,7 +216,7 @@ public class GameManager implements Observable {
 
 		this.currentPlayerIndex = 0;
 		this.status = Status.notSelected;
-		selectedCell = new Pair(Integer.MAX_VALUE, Integer.MAX_VALUE);
+		selectedCell = new Pair(MAX_VALUE, MAX_VALUE);
 	}
 
 	public Map<Pair, Integer> getBoard() {
