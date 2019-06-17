@@ -4,19 +4,18 @@ import helper.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Method;
 import java.util.Map;
 
 import static java.lang.Integer.MAX_VALUE;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestGameManager {
-	GameManager gameManager;
-	Pair pair;
-	Map<Pair, Integer> board;
-	enum Status {notSelected, clicked, afterClicked}
-	Status status;
-	int LINE_COUNT;
+class TestGameManager {
+	private GameManager gameManager;
+	private Pair pair;
+	private Map<Pair, Integer> board;
+	private enum Status {notSelected, clicked, afterClicked}
+	private Status status;
+	private int LINE_COUNT;
 
 
 	@BeforeEach
@@ -33,21 +32,21 @@ public class TestGameManager {
 	@Test
 	void testBoard() {
 		// check left top cells
-		assertTrue(board.get(pair).equals(0));
-		assertTrue(board.get(new Pair(1, 0)).equals(0));
+		assertEquals(0, (int) board.get(pair));
+		assertEquals(0, (int) board.get(new Pair(1, 0)));
 		//check right bottom cells
-		assertTrue(board.get(new Pair(LINE_COUNT - 1, LINE_COUNT - 1)).equals(0));
-		assertTrue(board.get(new Pair(LINE_COUNT - 2, LINE_COUNT - 1)).equals(0));
+		assertEquals(0, (int) board.get(new Pair(LINE_COUNT - 1, LINE_COUNT - 1)));
+		assertEquals(0, (int) board.get(new Pair(LINE_COUNT - 2, LINE_COUNT - 1)));
 
 		// check left bottom cells
-		assertTrue(board.get(new Pair(LINE_COUNT - 1, 0)).equals(1));
-		assertTrue(board.get(new Pair(LINE_COUNT - 2, 0)).equals(1));
+		assertEquals(1, (int) board.get(new Pair(LINE_COUNT - 1, 0)));
+		assertEquals(1, (int) board.get(new Pair(LINE_COUNT - 2, 0)));
 		//check right top cells
-		assertTrue(board.get(new Pair(0, LINE_COUNT - 1)).equals(1));
-		assertTrue(board.get(new Pair(1, LINE_COUNT - 1)).equals(1));
+		assertEquals(1, (int) board.get(new Pair(0, LINE_COUNT - 1)));
+		assertEquals(1, (int) board.get(new Pair(1, LINE_COUNT - 1)));
 
 		//check unoccupied cells
-		assertTrue(board.get(new Pair(0, LINE_COUNT - 2)).equals(MAX_VALUE));
+		assertEquals((int) board.get(new Pair(0, LINE_COUNT - 2)), MAX_VALUE);
 	}
 
 	// check the 3*3 board's initial status
@@ -58,17 +57,17 @@ public class TestGameManager {
 		gameManagerSmall.startProcedure();
 		board = gameManagerSmall.getBoard();
 		// check left top cells
-		assertTrue(board.get(pair).equals(0));
-		assertTrue(board.get(new Pair(1, 0)).equals(MAX_VALUE));
+		assertEquals(0, (int) board.get(pair));
+		assertEquals((int) board.get(new Pair(1, 0)), MAX_VALUE);
 
 		//check right bottom cells
-		assertTrue(board.get(new Pair(LINE_COUNT - 1, LINE_COUNT - 1)).equals(1));
-		assertTrue(board.get(new Pair(LINE_COUNT - 2, 0)).equals(MAX_VALUE));
+		assertEquals(1, (int) board.get(new Pair(LINE_COUNT - 1, LINE_COUNT - 1)));
+		assertEquals((int) board.get(new Pair(LINE_COUNT - 2, 0)), MAX_VALUE);
 	}
 
 	@Test
 	void testClickEventNotSelected() {
-		assertTrue(gameManager.getCurrentPlayerIndex() == board.get(pair));
+		assertEquals(gameManager.getCurrentPlayerIndex(), (int) board.get(pair));
 	}
 
 
