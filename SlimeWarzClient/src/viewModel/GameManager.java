@@ -8,6 +8,8 @@ import model.Player;
 
 import java.util.*;
 
+import static java.lang.Integer.MAX_VALUE;
+
 public class GameManager implements Observable {
 	private final int LINE_COUNT;
 	private List<Player> players;
@@ -15,8 +17,8 @@ public class GameManager implements Observable {
 	private int currentPlayerIndex = 0;
 	private List<Observer> observers;
 
-	private enum Steps {notSelected, clicked, afterClicked}
-	private Steps steps;
+	private enum Status {notSelected, clicked, afterClicked}
+	private Status status;
 	private Pair selectedCell;
 	private int turnCount;
 
@@ -30,17 +32,27 @@ public class GameManager implements Observable {
 		this.players.add(new Player(1));
 	}
 
+	public void startProcedure() {
+		initPlayers();
+		initCells();
+	}
+
+	/**
+	 * When click event happens, check the current status
+	 * @param clickedCell represents currently clicked cell
+	 */
 	public void clickEvent(Pair clickedCell) {
 		Player currPlayer = this.players.get(this.currentPlayerIndex);
-		switch (steps) {
+		switch (status) {
 			case notSelected:
-				if (currentPlayerIndex != board.get(clickedCell)) return;
+				if (currentPlayerIndex != board.get(clickedCell)) break;
 				if (isPlayerCell(clickedCell, currPlayer)) {
 					this.selectedCell = clickedCell;
-					this.steps = Steps.clicked;
+					this.status = Status.clicked;
 					updateAvailableCells(selectedCell);
 					notifyObserver();
 				}
+				System.out.println("not selected");
 				break;
 
 			case clicked:
@@ -53,19 +65,22 @@ public class GameManager implements Observable {
 				}
 
 				if (currentPlayerIndex == 0) {
-					if (players.get(1).getCellCoords().contains(clickedCell)) return;
+					if (players.get(1).getCellCoords().contains(clickedCell)) break;
+
 				} else if (currentPlayerIndex == 1) {
-					if (players.get(0).getCellCoords().contains(clickedCell)) return;
+					if (players.get(0).getCellCoords().contains(clickedCell)) break;
 				}
 
-				this.steps = Steps.afterClicked;
+				this.status = Status.afterClicked;
 				attack(clickedCell);
 				notifyObserver();
-
+				System.out.println("clicked");
 				break;
+
 			case afterClicked:
-				this.steps = Steps.notSelected;
+				this.status = Status.notSelected;
 				notifyObserver();
+				System.out.println("after Clicked");
 				break;
 		}
 	}
@@ -97,14 +112,16 @@ public class GameManager implements Observable {
 	}
 
 	private boolean canContinue() {
-		List<Pair> temp;
+		ArrayList<Integer> temp1 = new ArrayList<>();
+
 		for (Map.Entry<Pair, Integer> entry : board.entrySet()) {
-			if (entry.getValue() == 0 || entry.getValue() == 1) {
-				temp = findAvailableCells(entry.getKey());
-				if (temp.size() > 0) return true;
+			if (entry.getValue() == 0 && !temp1.contains(0)) {
+				temp1.add(0);
+			} else if (entry.getValue() == 1 && !temp1.contains(1)) {
+				temp1.add(1);
 			}
 		}
-		return false;
+		return temp1.size() == 2;
 	}
 
 	private void consumeCell(Pair clickedCell) {
@@ -113,10 +130,18 @@ public class GameManager implements Observable {
 		clearAvailableCells();
 
 		List<Pair> neighbors = findNeighborCells(clickedCell, 1);
+
 		for (Pair pair : neighbors) {
-			board.put(pair, currentPlayerIndex);
-			currPlayer.add(pair);
-			otherPlayer.remove(pair);
+			if (board.get(pair).equals(0)) {
+				board.put(pair, currentPlayerIndex);
+				currPlayer.add(pair);
+				otherPlayer.remove(pair);
+			}
+			if (board.get(pair).equals(1)) {
+				board.put(pair, currentPlayerIndex);
+				currPlayer.add(pair);
+				otherPlayer.remove(pair);
+			}
 		}
 	}
 
@@ -127,7 +152,7 @@ public class GameManager implements Observable {
 	}
 
 	private void removeCurrentCell() {
-		board.put(selectedCell, Integer.MAX_VALUE);
+		board.put(selectedCell, MAX_VALUE);
 		players.get(currentPlayerIndex).getCellCoords().remove(selectedCell);
 	}
 
@@ -136,11 +161,12 @@ public class GameManager implements Observable {
 		for (Pair pair : list) {
 			if (board.containsKey(pair)) board.put(pair, 2);
 		}
+		System.out.println("update available cells!");
 	}
 
 	private void clearAvailableCells() {
 		for (Map.Entry<Pair, Integer> entry : board.entrySet()) {
-			if (entry.getValue() == 2) entry.setValue(Integer.MAX_VALUE);
+			if (entry.getValue() == 2) entry.setValue(MAX_VALUE);
 		}
 	}
 
@@ -151,6 +177,7 @@ public class GameManager implements Observable {
 				retList.remove(entry.getKey());
 			}
 		}
+		System.out.println("find available cells");
 		return retList;
 	}
 
@@ -172,20 +199,10 @@ public class GameManager implements Observable {
 	}
 
 	private void initCells() {
-		this.players.get(0).add(0, 0);
-		this.players.get(0).add(1, 0);
-		this.players.get(0).add(LINE_COUNT - 1, LINE_COUNT - 1);
-		this.players.get(0).add(LINE_COUNT - 2, LINE_COUNT - 1);
-
-		this.players.get(1).add(LINE_COUNT - 1, 0);
-		this.players.get(1).add(LINE_COUNT - 2, 0);
-		this.players.get(1).add(0, LINE_COUNT - 1);
-		this.players.get(1).add(1, LINE_COUNT - 1);
-
 		this.board.clear();
 		for (int y = 0; y < LINE_COUNT; y++) { // Initialize the board with max_int values
 			for (int x = 0; x < LINE_COUNT; x++) {
-				this.board.put(new Pair(x, y), Integer.MAX_VALUE);
+				this.board.put(new Pair(x, y), MAX_VALUE);
 			}
 		}
 
@@ -196,17 +213,39 @@ public class GameManager implements Observable {
 		}
 
 		this.currentPlayerIndex = 0;
-		this.steps = Steps.notSelected;
-		selectedCell = new Pair(Integer.MAX_VALUE, Integer.MAX_VALUE);
+		this.status = Status.notSelected;
+		selectedCell = new Pair(MAX_VALUE, MAX_VALUE);
+	}
+
+	private void initPlayers() {
+		if (LINE_COUNT < 4) {
+			this.players.get(0).add(0, 0);
+			this.players.get(1).add(LINE_COUNT - 1, LINE_COUNT - 1);
+		} else {
+			this.players.get(0).add(0, 0);
+			this.players.get(0).add(1, 0);
+			this.players.get(0).add(LINE_COUNT - 1, LINE_COUNT - 1);
+			this.players.get(0).add(LINE_COUNT - 2, LINE_COUNT - 1);
+
+			this.players.get(1).add(LINE_COUNT - 1, 0);
+			this.players.get(1).add(LINE_COUNT - 2, 0);
+			this.players.get(1).add(0, LINE_COUNT - 1);
+			this.players.get(1).add(1, LINE_COUNT - 1);
+		}
+	}
+
+	public Status getStatus(){
+		return status;
+	}
+
+	public int getCurrentPlayerIndex() {
+		return currentPlayerIndex;
 	}
 
 	public Map<Pair, Integer> getBoard() {
 		return board;
 	}
 
-	public void startProcedure() {
-		initCells();
-	}
 
 	@Override
 	public void addObserver(Observer o) {

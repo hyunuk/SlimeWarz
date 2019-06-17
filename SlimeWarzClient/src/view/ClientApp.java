@@ -19,6 +19,15 @@ public class ClientApp extends JFrame implements Observer {
 
 	private GameManager gameManager;
 
+	public static void main(String[] args) {
+		ClientApp clientApp = new ClientApp();
+		clientApp.start();
+	}
+
+
+	/**
+	 * Construct a game board and set up the view, keep draw board
+	 */
 	private void start() {
 		gameManager = new GameManager(LINE_COUNT);
 		gameManager.addObserver(this);
@@ -26,6 +35,14 @@ public class ClientApp extends JFrame implements Observer {
 		gameManager.startProcedure();
 		drawBoard();
 	}
+
+	/**
+	 * Draw appropriate icon depends on current status of block
+	 * Status 0: occupied by o player
+	 *        1: occupied by x player
+	 *        2: border line to represent movable blocks
+	 *        default: not occupied and not movable blocks
+	 */
 
 	private void drawBoard() {
 		for (int y = 0; y < LINE_COUNT; y++) {
@@ -51,6 +68,10 @@ public class ClientApp extends JFrame implements Observer {
 		//gameManager.setInfoPanel();
 	}
 
+	/**
+	 * draw initial view with a basic setting
+	 */
+
 	private void initView() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("SlimeWars Client");
@@ -62,6 +83,11 @@ public class ClientApp extends JFrame implements Observer {
 		setVisible(true);
 	}
 
+	/**
+	 * set gamepanel size
+	 * @return new 512 * 512 game panel with 256*512 info panel
+	 */
+
 	private JPanel gamePanel() {
 		JPanel returnPanel = new JPanel(null);
 		ComponentAttacher.attach(returnPanel, playPanel(), 0, 0, 512, 512);
@@ -69,6 +95,11 @@ public class ClientApp extends JFrame implements Observer {
 
 		return returnPanel;
 	}
+
+	/**
+	 * when click event happens, update play panel
+	 * @return new current panel
+	 */
 
 	private JPanel playPanel() {
 		JPanel returnPanel = new JPanel();
@@ -88,6 +119,7 @@ public class ClientApp extends JFrame implements Observer {
 		return returnPanel;
 	}
 
+
 	private JPanel infoPanel() {
 		JPanel returnPanel = new JPanel();
 		returnPanel.setLayout(null);
@@ -105,10 +137,6 @@ public class ClientApp extends JFrame implements Observer {
 		return returnPanel;
 	}
 
-	public static void main(String[] args) {
-		ClientApp clientApp = new ClientApp();
-		clientApp.start();
-	}
 
 	@Override
 	public void update() {
