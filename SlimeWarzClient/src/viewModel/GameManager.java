@@ -32,6 +32,11 @@ public class GameManager implements Observable {
 		this.players.add(new Player(1));
 	}
 
+	public void startProcedure() {
+		initPlayers();
+		initCells();
+	}
+
 	/**
 	 * When click event happens, check the current status
 	 * @param clickedCell represents currently clicked cell
@@ -47,6 +52,7 @@ public class GameManager implements Observable {
 					updateAvailableCells(selectedCell);
 					notifyObserver();
 				}
+				System.out.println("not selected");
 				break;
 
 			case clicked:
@@ -68,11 +74,13 @@ public class GameManager implements Observable {
 				this.status = Status.afterClicked;
 				attack(clickedCell);
 				notifyObserver();
-
+				System.out.println("clicked");
 				break;
+
 			case afterClicked:
 				this.status = Status.notSelected;
 				notifyObserver();
+				System.out.println("after Clicked");
 				break;
 		}
 	}
@@ -191,16 +199,6 @@ public class GameManager implements Observable {
 	}
 
 	private void initCells() {
-		this.players.get(0).add(0, 0);
-		this.players.get(0).add(1, 0);
-		this.players.get(0).add(LINE_COUNT - 1, LINE_COUNT - 1);
-		this.players.get(0).add(LINE_COUNT - 2, LINE_COUNT - 1);
-
-		this.players.get(1).add(LINE_COUNT - 1, 0);
-		this.players.get(1).add(LINE_COUNT - 2, 0);
-		this.players.get(1).add(0, LINE_COUNT - 1);
-		this.players.get(1).add(1, LINE_COUNT - 1);
-
 		this.board.clear();
 		for (int y = 0; y < LINE_COUNT; y++) { // Initialize the board with max_int values
 			for (int x = 0; x < LINE_COUNT; x++) {
@@ -219,13 +217,35 @@ public class GameManager implements Observable {
 		selectedCell = new Pair(MAX_VALUE, MAX_VALUE);
 	}
 
+	private void initPlayers() {
+		if (LINE_COUNT < 4) {
+			this.players.get(0).add(0, 0);
+			this.players.get(1).add(LINE_COUNT - 1, LINE_COUNT - 1);
+		} else {
+			this.players.get(0).add(0, 0);
+			this.players.get(0).add(1, 0);
+			this.players.get(0).add(LINE_COUNT - 1, LINE_COUNT - 1);
+			this.players.get(0).add(LINE_COUNT - 2, LINE_COUNT - 1);
+
+			this.players.get(1).add(LINE_COUNT - 1, 0);
+			this.players.get(1).add(LINE_COUNT - 2, 0);
+			this.players.get(1).add(0, LINE_COUNT - 1);
+			this.players.get(1).add(1, LINE_COUNT - 1);
+		}
+	}
+
+	public Status getStatus(){
+		return status;
+	}
+
+	public int getCurrentPlayerIndex() {
+		return currentPlayerIndex;
+	}
+
 	public Map<Pair, Integer> getBoard() {
 		return board;
 	}
 
-	public void startProcedure() {
-		initCells();
-	}
 
 	@Override
 	public void addObserver(Observer o) {
