@@ -4,11 +4,10 @@ import helper.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Method;
 import java.util.Map;
 
 import static java.lang.Integer.MAX_VALUE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestGameManager {
 	GameManager gameManager;
