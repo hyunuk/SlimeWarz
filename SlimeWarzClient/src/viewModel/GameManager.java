@@ -70,6 +70,31 @@ public class GameManager implements Observable {
 		}
 	}
 
+	public void startProcedure() {
+		initCells();
+	}
+
+	public Map<Pair, Integer> getBoard() {
+		return board;
+	}
+
+	@Override
+	public void addObserver(Observer o) {
+		if (!observers.contains(o)) observers.add(o);
+	}
+
+	@Override
+	public void removeObserver(Observer o) {
+		observers.remove(o);
+	}
+
+	@Override
+	public void notifyObserver() {
+		for (Observer o : observers) {
+			o.update();
+		}
+	}
+
 	private void attack(Pair clickedCell) {
 		int distance = CellHelper.getDistance(selectedCell, clickedCell);
 		if (distance == 2) {
@@ -198,30 +223,5 @@ public class GameManager implements Observable {
 		this.currentPlayerIndex = 0;
 		this.steps = Steps.notSelected;
 		selectedCell = new Pair(Integer.MAX_VALUE, Integer.MAX_VALUE);
-	}
-
-	public Map<Pair, Integer> getBoard() {
-		return board;
-	}
-
-	public void startProcedure() {
-		initCells();
-	}
-
-	@Override
-	public void addObserver(Observer o) {
-		if (!observers.contains(o)) observers.add(o);
-	}
-
-	@Override
-	public void removeObserver(Observer o) {
-		observers.remove(o);
-	}
-
-	@Override
-	public void notifyObserver() {
-		for (Observer o : observers) {
-			o.update();
-		}
 	}
 }

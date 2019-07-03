@@ -12,12 +12,17 @@ public class ClientApp extends JFrame implements Observer {
 	private static final int LINE_COUNT = 7;
 	private final Dimension CLIENT_FRAME_DIM = new Dimension(768, 550);
 	private final Rectangle CLIENT_FRAME_RECT = new Rectangle(CLIENT_FRAME_DIM);
-	private Icon oIcon = new ImageIcon(this.getClass().getResource("/res/red.png"));
-	private Icon xIcon = new ImageIcon(this.getClass().getResource("/res/blue.png"));
-	private Icon border = new ImageIcon(this.getClass().getResource("/res/border.png"));
+	private Icon oIcon;
+	private Icon xIcon;
+	private Icon border;
 	private JButton[][] squares;
 
 	private GameManager gameManager;
+
+	public static void main(String[] args) {
+		ClientApp clientApp = new ClientApp();
+		clientApp.start();
+	}
 
 	private void start() {
 		gameManager = new GameManager(LINE_COUNT);
@@ -25,6 +30,25 @@ public class ClientApp extends JFrame implements Observer {
 		initView();
 		gameManager.startProcedure();
 		drawBoard();
+	}
+
+	@Override
+	public void update() {
+		drawBoard();
+	}
+
+	private void initView() {
+		oIcon = new ImageIcon(this.getClass().getResource("/res/red.png"));
+		xIcon = new ImageIcon(this.getClass().getResource("/res/blue.png"));
+		border = new ImageIcon(this.getClass().getResource("/res/border.png"));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle("SlimeWars Client");
+		setPreferredSize(CLIENT_FRAME_DIM);
+		setResizable(false);
+		setLayout(null);
+		ComponentAttacher.attach(this, gamePanel(), CLIENT_FRAME_RECT);
+		pack();
+		setVisible(true);
 	}
 
 	private void drawBoard() {
@@ -49,17 +73,6 @@ public class ClientApp extends JFrame implements Observer {
 		}
 
 		//gameManager.setInfoPanel();
-	}
-
-	private void initView() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle("SlimeWars Client");
-		setPreferredSize(CLIENT_FRAME_DIM);
-		setResizable(false);
-		setLayout(null);
-		ComponentAttacher.attach(this, gamePanel(), CLIENT_FRAME_RECT);
-		pack();
-		setVisible(true);
 	}
 
 	private JPanel gamePanel() {
@@ -103,15 +116,5 @@ public class ClientApp extends JFrame implements Observer {
 		ComponentAttacher.attach(returnPanel, p2CellInfo, 0, 180, 200, 25);
 		ComponentAttacher.attach(returnPanel, selectedCellInfo, 0, 210, 200, 25);
 		return returnPanel;
-	}
-
-	public static void main(String[] args) {
-		ClientApp clientApp = new ClientApp();
-		clientApp.start();
-	}
-
-	@Override
-	public void update() {
-		drawBoard();
 	}
 }
