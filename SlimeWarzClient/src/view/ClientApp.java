@@ -12,10 +12,21 @@ public class ClientApp extends JFrame implements Observer {
 	private static final int LINE_COUNT = 7;
 	private final Dimension CLIENT_FRAME_DIM = new Dimension(768, 550);
 	private final Rectangle CLIENT_FRAME_RECT = new Rectangle(CLIENT_FRAME_DIM);
-	private Icon oIcon;
-	private Icon xIcon;
-	private Icon border;
+
+	private final String TURN = "Current turn is : ";
+	private final String RED_CELL = "Red slimes are : ";
+	private final String BLUE_CELL = "Blue slimes are : ";
+	private final String SELECTED_CELL = "You selected : ";
+	private final Icon oIcon = new ImageIcon(this.getClass().getResource("/res/red.png"));
+	private final Icon xIcon = new ImageIcon(this.getClass().getResource("/res/blue.png"));
+	private final Icon border = new ImageIcon(this.getClass().getResource("/res/border.png"));
+
 	private JButton[][] squares;
+
+	private JLabel currentTurnInfo;
+	private JLabel redCellInfo;
+	private JLabel blueCellInfo;
+	private JLabel selectedCellInfo;
 
 	private GameManager gameManager;
 
@@ -24,6 +35,10 @@ public class ClientApp extends JFrame implements Observer {
 		clientApp.start();
 	}
 
+
+	/**
+	 * Construct a game board and set up the view, keep draw board
+	 */
 	private void start() {
 		gameManager = new GameManager(LINE_COUNT);
 		gameManager.addObserver(this);
@@ -32,24 +47,13 @@ public class ClientApp extends JFrame implements Observer {
 		drawBoard();
 	}
 
-	@Override
-	public void update() {
-		drawBoard();
-	}
-
-	private void initView() {
-		oIcon = new ImageIcon(this.getClass().getResource("/res/red.png"));
-		xIcon = new ImageIcon(this.getClass().getResource("/res/blue.png"));
-		border = new ImageIcon(this.getClass().getResource("/res/border.png"));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle("SlimeWars Client");
-		setPreferredSize(CLIENT_FRAME_DIM);
-		setResizable(false);
-		setLayout(null);
-		ComponentAttacher.attach(this, gamePanel(), CLIENT_FRAME_RECT);
-		pack();
-		setVisible(true);
-	}
+	/**
+	 * Draw appropriate icon depends on current status of block
+	 * Status 0: occupied by o player
+	 *        1: occupied by x player
+	 *        2: border line to represent movable blocks
+	 *        default: not occupied and not movable blocks
+	 */
 
 	private void drawBoard() {
 		for (int y = 0; y < LINE_COUNT; y++) {
@@ -71,9 +75,30 @@ public class ClientApp extends JFrame implements Observer {
 				}
 			}
 		}
-
-		//gameManager.setInfoPanel();
+		currentTurnInfo.setText(TURN + gameManager.getTurnCount());
+		redCellInfo.setText(RED_CELL + gameManager.getRedSlimesCount());
+		blueCellInfo.setText(BLUE_CELL + gameManager.getBlueSlimesCount());
 	}
+
+	/**
+	 * draw initial view with a basic setting
+	 */
+
+	private void initView() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle("SlimeWars Client");
+		setPreferredSize(CLIENT_FRAME_DIM);
+		setResizable(false);
+		setLayout(null);
+		ComponentAttacher.attach(this, gamePanel(), CLIENT_FRAME_RECT);
+		pack();
+		setVisible(true);
+	}
+
+	/**
+	 * set gamepanel size
+	 * @return new 512 * 512 game panel with 256*512 info panel
+	 */
 
 	private JPanel gamePanel() {
 		JPanel returnPanel = new JPanel(null);
@@ -82,6 +107,11 @@ public class ClientApp extends JFrame implements Observer {
 
 		return returnPanel;
 	}
+
+	/**
+	 * when click event happens, update play panel
+	 * @return new current panel
+	 */
 
 	private JPanel playPanel() {
 		JPanel returnPanel = new JPanel();
@@ -95,6 +125,11 @@ public class ClientApp extends JFrame implements Observer {
 				Pair currentCoord = new Pair(x, y);
 				squares[y][x].addActionListener(e -> { // set clickEvent to each of buttons
 					gameManager.clickEvent(currentCoord);
+					if (currentCoord == gameManager.getSelectedCell()) {
+						selectedCellInfo.setText(SELECTED_CELL + currentCoord.toString());
+					} else {
+						selectedCellInfo.setText("");
+					}
 				});
 			}
 		}
@@ -104,17 +139,22 @@ public class ClientApp extends JFrame implements Observer {
 	private JPanel infoPanel() {
 		JPanel returnPanel = new JPanel();
 		returnPanel.setLayout(null);
-		JLabel currentTurnInfo = new JLabel();
-		JLabel currentTurnCount = new JLabel();
-		JLabel p1CellInfo = new JLabel();
-		JLabel p2CellInfo = new JLabel();
-		JLabel selectedCellInfo = new JLabel();
+		currentTurnInfo = new JLabel(TURN + gameManager.getTurnCount());
+		redCellInfo = new JLabel();
+		blueCellInfo = new JLabel();
+		selectedCellInfo = new JLabel();
 
 		ComponentAttacher.attach(returnPanel, currentTurnInfo, 10, 100, 200, 25);
-		ComponentAttacher.attach(returnPanel, currentTurnCount, 10, 120, 200, 25);
-		ComponentAttacher.attach(returnPanel, p1CellInfo, 0, 150, 200, 25);
-		ComponentAttacher.attach(returnPanel, p2CellInfo, 0, 180, 200, 25);
-		ComponentAttacher.attach(returnPanel, selectedCellInfo, 0, 210, 200, 25);
+		ComponentAttacher.attach(returnPanel, redCellInfo, 10, 150, 200, 25);
+		ComponentAttacher.attach(returnPanel, blueCellInfo, 10, 180, 200, 25);
+		ComponentAttacher.attach(returnPanel, selectedCellInfo, 10, 210, 200, 25);
+
 		return returnPanel;
+	}
+
+
+	@Override
+	public void update() {
+		drawBoard();
 	}
 }

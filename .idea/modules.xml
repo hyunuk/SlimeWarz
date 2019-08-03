@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/SlimeWarz.iml" filepath="$PROJECT_DIR$/.idea/SlimeWarz.iml" />
       <module fileurl="file://$PROJECT_DIR$/SlimeWarzClient/SlimeWarzClient.iml" filepath="$PROJECT_DIR$/SlimeWarzClient/SlimeWarzClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SlimeWarzServer/SlimeWarzServer.iml" filepath="$PROJECT_DIR$/SlimeWarzServer/SlimeWarzServer.iml" />
     </modules>
   </component>
 </project>
