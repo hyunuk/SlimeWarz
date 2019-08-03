@@ -1,5 +1,4 @@
 # SlimeWarz 
-![Title](https://user-images.githubusercontent.com/38146012/62412414-d804d880-b63c-11e9-8db3-97ddc2ef0960.png)
 ![silmewarz_red_win](https://user-images.githubusercontent.com/38146012/62412512-7ba2b880-b63e-11e9-9573-185f5eb5b8d6.gif)
 
 Personal Project :fire:
