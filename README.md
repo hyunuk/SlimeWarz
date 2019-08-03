@@ -1,6 +1,5 @@
 # SlimeWarz 
-![SlimeWarz Title]
-(https://github.com/hyunuk71/SlimeWarz/blob/master/SlimeWarzClient/src/res/Title.png)
+![Title](https://user-images.githubusercontent.com/38146012/62412414-d804d880-b63c-11e9-8db3-97ddc2ef0960.png)
 
 Personal Project :fire:
 
