@@ -1,5 +1,5 @@
 # SlimeWarz 
-![silmewarz_red_win](https://user-images.githubusercontent.com/38146012/62412512-7ba2b880-b63e-11e9-9573-185f5eb5b8d6.gif)
+![endGame](https://user-images.githubusercontent.com/38146012/62413513-bf9bba80-b64a-11e9-86b9-23ce720a005d.gif)
 
 Personal Project :fire:
 
