@@ -1,5 +1,9 @@
 # SlimeWarz 
-Personal Project 
+![SlimeWarz Title]
+(https://github.com/hyunuk71/SlimeWarz/blob/master/SlimeWarzClient/src/res/Title.png)
+
+Personal Project :fire:
+
 
 ## About 
 
