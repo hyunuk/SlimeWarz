@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 
 import static java.lang.Integer.MAX_VALUE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TestGameManager {
 	private GameManager gameManager;
