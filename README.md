@@ -26,7 +26,7 @@ You’re the winner if you got the more slimes when no more slimes can be played
 5. Use diverse strategies to beat opponents' slime.
 
 ## Installation
-Run the ClientApp with JVM
+Run the ClientApp with JVM or Download this JAR file [Google Drive Link](https://drive.google.com/open?id=1CwePpUTpWgjHYK0yLvuHp2kMe2yg5ON1)
 
 ## Built With
 * Java
