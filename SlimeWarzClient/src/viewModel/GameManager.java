@@ -20,7 +20,7 @@ public class GameManager implements Observable {
 	private enum Status {notSelected, clicked, afterClicked}
 	private Status status;
 	private Pair selectedCell;
-	private int turnCount;
+	private int turnCount = 0;
 
 	public GameManager(final int LINE_COUNT) {
 		this.LINE_COUNT = LINE_COUNT;
@@ -246,6 +246,21 @@ public class GameManager implements Observable {
 		return board;
 	}
 
+	public int getTurnCount() {
+		return turnCount;
+	}
+
+	public int getRedSlimesCount() {
+		return players.get(0).getSlimes();
+	}
+
+	public int getBlueSlimesCount() {
+		return players.get(1).getSlimes();
+	}
+
+	public Pair getSelectedCell() {
+		return selectedCell;
+	}
 
 	@Override
 	public void addObserver(Observer o) {
