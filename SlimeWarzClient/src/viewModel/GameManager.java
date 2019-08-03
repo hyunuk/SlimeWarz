@@ -95,7 +95,6 @@ public class GameManager implements Observable {
 
 		if (!canContinue()) {
 			gameOver();
-			startProcedure();
 			return;
 		}
 		clearAvailableCells();
@@ -108,16 +107,7 @@ public class GameManager implements Observable {
 	}
 
 	private boolean canContinue() {
-		ArrayList<Integer> temp1 = new ArrayList<>();
-
-		for (Map.Entry<Pair, Integer> entry : board.entrySet()) {
-			if (entry.getValue() == 0 && !temp1.contains(0)) {
-				temp1.add(0);
-			} else if (entry.getValue() == 1 && !temp1.contains(1)) {
-				temp1.add(1);
-			}
-		}
-		return temp1.size() == 2;
+		return (board.containsValue(0) && board.containsValue(1)) && (getRedSlimesCount() + getBlueSlimesCount() < 49);
 	}
 
 	private void consumeCell(Pair clickedCell) {
