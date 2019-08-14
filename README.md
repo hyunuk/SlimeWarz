@@ -13,10 +13,9 @@ while you give battle for conquering the board.
 You’re the winner if you got the more slimes when no more slimes can be played. 
 
 ## Main features 
-* Turn based, 2 player mode supported, 7 x 7 board game 
-* Developed with OOP such as Observer pattern, minimized coupling between classes
-* Developed MVVM pattern by dividing view, viewModel, and model packages
-* Challenge your friends on the same device (2 player mode)
+* Turn based, 2 players needed, 7*7 size board game 
+* Developed with basic OOP concepts to minimize coupling between classes
+* Applied the MVVM pattern by dividing view, viewModel, and model packages
 
 ## Play Sequence 
 1. One players will be a red slimes and another will be a blue slimes. 
@@ -32,6 +31,3 @@ Run the ClientApp with JVM or Download this JAR file via [Google Drive Link](htt
 * Java
 * GUI: Swing
 * Test: JUnit 5
-
-## Acknowledgments
-* Dragon quest Fan-made slime - Title image used
