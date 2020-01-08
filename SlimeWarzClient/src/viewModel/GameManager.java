@@ -82,6 +82,10 @@ public class GameManager implements Observable {
 
 	private void attack(Pair clickedCell) {
 		int distance = CellHelper.getDistance(selectedCell, clickedCell);
+		if (distance > 2) {
+			clearAvailableCells();
+			return;
+		}
 		if (distance == 2) {
 			removeCurrentCell();
 		}
