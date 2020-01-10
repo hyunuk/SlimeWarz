@@ -173,15 +173,19 @@ public class GameManager implements Observable {
 
 	private List<Pair> findNeighborCells(Pair base, int gap) {
 		List<Pair> retList = new ArrayList<>();
-		for (int y = 0; y < LINE_COUNT; y++) {
-			for (int x = 0; x < LINE_COUNT; x++) {
-				Pair temp = new Pair(x, y);
-				if (CellHelper.getDistance(base, temp) <= gap) {
-					retList.add(temp);
+		int X = base.getX(), Y = base.getY();
+		for (int x = X - gap; x <= X + gap; x++) {
+			for (int y = Y - gap; y <= Y + gap; y++) {
+				if (withinBoundary(x, y)) {
+					retList.add(new Pair(x, y));
 				}
 			}
 		}
 		return retList;
+	}
+
+	private boolean withinBoundary(int x, int y) {
+		return 0 <= x && x < LINE_COUNT && 0 <= y && y < LINE_COUNT;
 	}
 
 	private boolean isPlayerCell(Pair cell, Player currPlayer) {
